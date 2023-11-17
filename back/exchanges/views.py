@@ -17,7 +17,14 @@ def save_exchange_rates(request):
     api_key = 'VZuN8cgkfjO4hxiYFqEyk6B1RKaJdeZz'
     search_date = datetime.now().strftime('%Y%m%d')
     url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate={search_date}&data=AP01'
+    # url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate=20230215&data=AP01'
+    
 
+    ## 테이블 리셋
+    curr_data = ExchangeRates.objects.all()
+    curr_data.delete()
+
+    # api 응답 데이터로 테이블 저장 
     response = requests.get(url).json()
     for li in response:
         save_data = {
@@ -40,9 +47,42 @@ def save_exchange_rates(request):
     return JsonResponse({ 'message': 'okay'})
 
 
+@api_view(['GET'])
+def find_country_info(request, country, category):
+    if request.method == "GET":
+        country_info = ExchangeRates.objects.get(cur_unit=country)
+        print(country_info)
+        # exchange_rate = country_info.values(category)
+        # print('333',exchange_rate)
+
+        unit = country_info.cur_nm.split()[-1]
+        
+        if category == 'ttb':
+            exchange_rate = country_info.ttb
+        elif category == 'tts':
+            exchange_rate = country_info.tts
+        elif category == 'deal_bas_r':
+            exchange_rate = country_info.ttb
+        
+
+        # exchage_rate = country_info.i
+        # print(exchage_rate)
+        # serializer = ExchangeRatesSerializer(exchange_rate)
+
+    # elif request.method == "POST":
+    #     serializer = ExchangeRatesSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return Response({ 'message': '이미 있는 데이터이거나, 데이터가 잘못 입력되었습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'rate': exchange_rate, 'unit': unit})
+
+
 
 @api_view(['GET', 'POST'])
-def exchange(request):
+def exchange_all(request):
     if request.method == "GET":
         exchange_rates = ExchangeRates.objects.all()
         serializer = ExchangeRatesSerializer(exchange_rates, many=True)
