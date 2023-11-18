@@ -46,17 +46,17 @@ class ArticleSerializer(serializers.ModelSerializer):
     class UserSerializer(serializers.ModelSerializer):
         class Meta:
             model = get_user_model()
-            fields = ('username',)
+            fields = ('id', 'username',)
 
     class ArticleProductCategorySerializer(serializers.ModelSerializer):
         class Meta:
             model = ArticleProductCategory
-            fields = ('name',)
+            fields = ('id', 'name',)
     
     class ArticleBankCategorySerializer(serializers.ModelSerializer):
         class Meta:
             model = ArticleBankCategory
-            fields = ('name',)
+            fields = ('id', 'name',)
     
     user = UserSerializer(read_only=True)
     article_product_category = ArticleProductCategorySerializer(read_only=True)
