@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -23,9 +21,6 @@ def article_list(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        print('!!!')
-        print(request.data)
-        print(request.user)
         article_bank_category = ArticleBankCategory.objects.get(pk=request.data['article_bank_category'])
         article_product_category = ArticleProductCategory.objects.get(pk=request.data['article_product_category'])
         serializer = ArticleSerializer(data=request.data)
