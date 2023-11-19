@@ -11,6 +11,14 @@ from .models import ExchangeRates
 from .serializers import ExchangeRatesSerializer
 
 
+# ## crawling
+# from bs4 import BeautifulSoup
+# from selenium import webdriver
+# import matplotlib.pyplot as plt
+# from io import BytesIO
+# import base64
+
+
 # Create your views here.
 @api_view(['GET'])
 def save_exchange_rates(request):

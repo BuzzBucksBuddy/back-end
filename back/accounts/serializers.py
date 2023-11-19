@@ -15,11 +15,13 @@ class CustomRegisterSerializer(RegisterSerializer):
     age = serializers.IntegerField(required=True)
     money = serializers.IntegerField(required=False)
     salary = serializers.IntegerField(required=False)
-    financial_products = serializers.ListField(child=serializers.IntegerField(), required=False)
+    financial_products = serializers.ListField(child=serializers.CharField(), required=False)
+    # financial_products = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     profile_thumbnail = serializers.ImageField(required=False)
     # mileage = serializers.IntegerField(required=False)
-    favorite = serializers.ListField(child=serializers.IntegerField(), required=False)
+    favorite = serializers.ListField(child=serializers.CharField(), required=False)
+    # favorite = serializers.ListField(child=serializers.IntegerField(), required=False)
     mbti = serializers.CharField(
         max_length=10,
         required=False,

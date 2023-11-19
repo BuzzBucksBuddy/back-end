@@ -16,7 +16,7 @@ class User(AbstractUser):
         blank = True,
         null = True
     )
-    email = models.EmailField(max_length=255, blank=True, null=True)
+    email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='email address')
     mileage = models.IntegerField(default=0)
     age = models.IntegerField(default=0)
     money = models.IntegerField(blank=True, null=True)
@@ -24,6 +24,8 @@ class User(AbstractUser):
     # 리스트 데이터 저장을 위해 Text 형태로 저장
     financial_products = models.TextField(blank=True, null=True)
     favorite = models.TextField(blank=True, null=True)
+    # financial_products = models.JSONField(blank=True, null=True)
+    # favorite = models.JSONField(blank=True, null=True)
 
     mbti = models.CharField(
         max_length=10,
@@ -87,6 +89,15 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             user.mbti = mbti
         if main_bank:
             user.main_bank = main_bank
+
+        # if financial_product:
+        #     financial_products_values = user.financial_products or []
+        #     financial_products_values.extend(financial_product.split(',')) 
+        #     user_field(user, "financial_products", financial_products_values)
+        # if favorite:
+        #     favorite_values = user.favorite or []
+        #     favorite_values.extend(favorite.split(',')) 
+        #     user_field(user, "favorite", favorite_values)
         if financial_product:
             financial_products = user.financial_products.split(',')
             financial_products.append(financial_product)
