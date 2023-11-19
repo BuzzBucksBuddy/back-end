@@ -15,7 +15,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     age = serializers.IntegerField(required=True)
     money = serializers.IntegerField(required=False)
     salary = serializers.IntegerField(required=False)
-    financial_products = serializers.ListField(child=serializers.CharField(), required=False)
+    # financial_products = serializers.ListField(child=serializers.CharField(), required=False)
     # financial_products = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     profile_thumbnail = serializers.ImageField(required=False)
@@ -37,7 +37,7 @@ class CustomRegisterSerializer(RegisterSerializer):
             'age': self.validated_data.get('age', ''),
             'money': self.validated_data.get('money', ''),
             'salary': self.validated_data.get('salary', ''),
-            'financial_products': self.validated_data.get('financial_products', ''),
+            # 'financial_products': self.validated_data.get('financial_products', ''),
             'profile_thumbnail': self.validated_data.get('profile_thumbnail', ''),
             'mileage': self.validated_data.get('mileage', ''),
             'favorite': self.validated_data.get('favorite', ''),
