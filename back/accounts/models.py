@@ -99,17 +99,24 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         #     favorite_values.extend(favorite.split(',')) 
         #     user_field(user, "favorite", favorite_values)
         if financial_product:
-            financial_products = user.financial_products.split(',')
-            financial_products.append(financial_product)
-            if len(financial_products) > 1:
-                financial_products = ','.join(financial_products)
-            user_field(user, "financial_products", financial_products)
+            fin = ''
+            for i in financial_product:
+                fin = str(i)
+            # financial_products = user.financial_products.split(',')
+            # financial_products.append(financial_product)
+            # if len(financial_products) > 1:
+            #     financial_products = ','.join(financial_products)
+            user_field(user, "financial_products", fin)
         if favorite:
-            favorite = user.favorite.split(',')
-            favorite.append(favorite)
-            if len(favorite) > 1:
-                favorite = ','.join(favorite)
-            user_field(user, "favorite", favorite)
+            fav = ''
+            for i in favorite:
+                fav = str(i)
+            print(fav)
+            # user.favorite = fav.split(',')
+            # user.favorite.append(favorite)
+            # if len(favorite) > 1:
+            #     favorite = ','.join(favorite)
+            user_field(user, "favorite", fav)
         if "password1" in data:
             user.set_password(data["password1"])
         else:
