@@ -83,6 +83,8 @@ def products_data(request):
             'intr_rate_type_nm': li.get('intr_rate_type_nm'),
             'intr_rate': li.get('intr_rate'),
             'intr_rate2': li.get('intr_rate2'),
+            'rsrv_type': li.get('rsrv_type'),
+            'rsrv_type_nm': li.get('rsrv_type_nm'),
             'save_trm': li.get('save_trm'),
         }
         
@@ -130,7 +132,7 @@ def saving_product(request, fin_prdt_cd):
 @api_view(['GET'])
 def deposit_options(request, fin_prdt_cd):
     product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
-    options = product.option.all()
+    options = product.dep_option.all()
     serializer = DepositOptionsSerializer(options, many=True)
     return Response(serializer.data)
 
@@ -139,6 +141,6 @@ def deposit_options(request, fin_prdt_cd):
 @api_view(['GET'])
 def saving_options(request, fin_prdt_cd):
     product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
-    options = product.option.all()
+    options = product.sav_option.all()
     serializer = SavingOptionsSerializer(options, many=True)
     return Response(serializer.data)
