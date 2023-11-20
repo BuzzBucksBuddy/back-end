@@ -16,8 +16,8 @@ from products.models import DepositProducts, SavingProducts
 
 # Create your views here.
 @api_view(['GET', 'POST'])
-def my_profile(request, nickname):
-    user = User.objects.get(nickname=nickname)   ## 직접참조 말고 변경
+def my_profile(request, user_id):
+    user = User.objects.get(pk=user_id)   ## 직접참조 말고 변경
     if request.method == 'GET':
         serializer = CustomRegisterSerializer(user)   
         return Response(serializer.data)
