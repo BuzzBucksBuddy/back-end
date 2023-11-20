@@ -15,11 +15,13 @@ from products.models import DepositProducts, SavingProducts
 
 
 # Create your views here.
+
 @api_view(['GET', 'POST'])
-def my_profile(request, user_id):
-    user = User.objects.get(pk=user_id)   ## 직접참조 말고 변경
+@permission_classes([IsAuthenticated])
+def my_profile(request):
+    # user = User.objects.get(pk=request.user.id)   ## 직접참조 말고 변경
     if request.method == 'GET':
-        serializer = CustomRegisterSerializer(user)   
+        serializer = CustomRegisterSerializer(request.user)   
         return Response(serializer.data)
     
     else:
