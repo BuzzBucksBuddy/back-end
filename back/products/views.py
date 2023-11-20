@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
-from .models import DepositProducts, SavingProducts
+from .models import DepositProducts, SavingProducts, DepositOptions, SavingOptions
 from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer
 import requests
 
@@ -130,7 +130,7 @@ def saving_product(request, fin_prdt_cd):
 @api_view(['GET'])
 def deposit_options(request, fin_prdt_cd):
     product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
-    options = product.option.all()
+    options = product.dep_option.all()
     serializer = DepositOptionsSerializer(options, many=True)
     return Response(serializer.data)
 
@@ -139,6 +139,6 @@ def deposit_options(request, fin_prdt_cd):
 @api_view(['GET'])
 def saving_options(request, fin_prdt_cd):
     product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
-    options = product.option.all()
+    options = product.sav_option.all()
     serializer = SavingOptionsSerializer(options, many=True)
     return Response(serializer.data)

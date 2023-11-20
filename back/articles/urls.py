@@ -7,6 +7,8 @@ urlpatterns = [
     path('list/', views.article_list),
     path('list/<int:product_pk>/<int:bank_pk>/', views.article_categorize),
 
+    path('list/search/<str:field>/<str:input>/', views.article_search),
+
     path('<int:article_pk>/detail/', views.article_detail),
     path('<int:article_pk>/control/', views.article_control),
     path('<int:article_pk>/likes/', views.article_like),

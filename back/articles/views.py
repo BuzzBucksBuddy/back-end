@@ -71,6 +71,28 @@ def article_categorize(request, product_pk, bank_pk):
             return Response(serializer.data)
 
 
+@api_view(['GET'])
+def article_search(request, field, input):
+    if request.method == 'GET':
+        if field == 'title':
+            articles = Article.objects.filter(title__contains=input).order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
+        
+        elif field == 'content':
+            articles = Article.objects.filter(content__contains=input).order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
+        
+        else:
+            by_title = Article.objects.filter(title__contains=input)
+            by_content = Article.objects.filter(content__contains=input)
+            articles = by_title | by_content
+            articles = articles.order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
+
+
 # 게시글 DELETE, UPDATE
 @api_view(['DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
