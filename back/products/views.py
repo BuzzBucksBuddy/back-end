@@ -83,6 +83,8 @@ def products_data(request):
             'intr_rate_type_nm': li.get('intr_rate_type_nm'),
             'intr_rate': li.get('intr_rate'),
             'intr_rate2': li.get('intr_rate2'),
+            'rsrv_type': li.get('rsrv_type'),
+            'rsrv_type_nm': li.get('rsrv_type_nm'),
             'save_trm': li.get('save_trm'),
         }
         
