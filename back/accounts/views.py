@@ -9,9 +9,9 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from .serializers import CustomRegisterSerializer
-from .models import User, CustomAccountAdapter
+from .models import User, CustomAccountAdapter, Favorite
 from products.models import DepositProducts, SavingProducts
+from .serializers import CustomRegisterSerializer, FavoriteSerializer
 
 
 # Create your views here.
@@ -32,3 +32,16 @@ def my_profile(request):
     #         serializer.save()
     #         return Response(serializer.data, status=status.HTTP_200_OK)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def favorite_category(request):
+    if request.method == "GET":
+        favorites = Favorite.objects.all()
+        serializer = FavoriteSerializer(favorites, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == "POST":
+        serializer = FavoriteSerializer(request.user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)

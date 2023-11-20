@@ -1,0 +1,73 @@
+[{
+	"model": "accounts.Favorite",
+	"pk": 1,
+	"fields": {
+		"favorite": "전자기기"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 2,
+	"fields": {
+		"favorite": "패션"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 3,
+	"fields": {
+		"favorite": "여행"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 4,
+	"fields": {
+		"favorite": "스포츠"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 5,
+	"fields": {
+		"favorite": "반려동물"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 6,
+	"fields": {
+		"favorite": "커피"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 7,
+	"fields": {
+		"favorite": "맛집"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 8,
+	"fields": {
+		"favorite": "자동차"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 9,
+	"fields": {
+		"favorite": "부동산"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 10,
+	"fields": {
+		"favorite": "콘서트"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 11,
+	"fields": {
+		"favorite": "부모님"
+	}
+},{
+	"model": "accounts.Favorite",
+	"pk": 12,
+	"fields": {
+		"favorite": "생일"
+	}
+}]
