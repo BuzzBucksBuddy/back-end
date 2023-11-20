@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'exchanges',
     'maps',
 
+    'django_seed',
+
     'imagekit',
 
     'corsheaders',
