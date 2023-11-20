@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
+from django.conf import settings
 
 
 options = (
@@ -18,6 +20,8 @@ class DepositProducts(models.Model):
     join_member = models.TextField()  # 가입 대상
     join_way = models.TextField()  # 가입 방법
     spcl_cnd = models.TextField()  # 우대 조건
+
+    user_references = GenericRelation(settings.AUTH_USER_MODEL, related_query_name='deposit_products_references')
 
 
 class DepositOptions(models.Model):
@@ -39,6 +43,8 @@ class SavingProducts(models.Model):
     join_member = models.TextField()  # 가입 대상
     join_way = models.TextField()  # 가입 방법
     spcl_cnd = models.TextField()  # 우대 조건
+
+    user_references = GenericRelation(settings.AUTH_USER_MODEL, related_query_name='saving_products_references')
 
 
 class SavingOptions(models.Model):

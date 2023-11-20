@@ -1,8 +1,11 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AbstractUser
 from allauth.account.adapter import DefaultAccountAdapter
 from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
+from products.models import SavingProducts, DepositProducts
 
 
 class User(AbstractUser):
@@ -22,7 +25,12 @@ class User(AbstractUser):
     money = models.IntegerField(blank=True, null=True)
     salary = models.IntegerField(blank=True, null=True)
     # 리스트 데이터 저장을 위해 Text 형태로 저장
-    financial_products = models.TextField(blank=True, null=True)
+    # financial_products = models.TextField(blank=True, null=True)
+    
+    fp_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+    fp_object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = GenericForeignKey('fp_content_type', 'fp_object_id')
+
     favorite = models.TextField(blank=True, null=True)
     # financial_products = models.JSONField(blank=True, null=True)
     # favorite = models.JSONField(blank=True, null=True)
@@ -59,7 +67,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         age = data.get("age")
         money = data.get("money")
         salary = data.get("salary")
-        financial_product = data.get("financial_products")
+        # financial_products = data.get("financial_products")
 
         profile_thumbnail = data.get("profile_thumbnail")
         mileage = data.get("mileage")
@@ -98,15 +106,15 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         #     favorite_values = user.favorite or []
         #     favorite_values.extend(favorite.split(',')) 
         #     user_field(user, "favorite", favorite_values)
-        if financial_product:
-            fin = ''
-            for i in financial_product:
-                fin = str(i)
-            # financial_products = user.financial_products.split(',')
-            # financial_products.append(financial_product)
-            # if len(financial_products) > 1:
-            #     financial_products = ','.join(financial_products)
-            user_field(user, "financial_products", fin)
+        # if financial_product:
+        #     fin = ''
+        #     for i in financial_product:
+        #         fin = str(i)
+        #     # financial_products = user.financial_products.split(',')
+        #     # financial_products.append(financial_product)
+        #     # if len(financial_products) > 1:
+        #     #     financial_products = ','.join(financial_products)
+        #     user_field(user, "financial_products", fin)
         if favorite:
             fav = ''
             for i in favorite:
@@ -127,3 +135,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             # this adapter by adding
             user.save()
         return user
+    
+
+
+# class Favorite(models.Model):
+#     favorite = models.CharField(max_length=225, null=True)
+      

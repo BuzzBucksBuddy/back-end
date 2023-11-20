@@ -1,8 +1,9 @@
-import requests
+import requests, time, random
+# from requests_html import HTMLSession
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.conf import settings
 from django.http import JsonResponse
@@ -11,19 +12,30 @@ from .models import ExchangeRates
 from .serializers import ExchangeRatesSerializer
 
 
-# ## crawling
-# from bs4 import BeautifulSoup
-# from selenium import webdriver
+## crawling
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 # import matplotlib.pyplot as plt
-# from io import BytesIO
-# import base64
+from io import BytesIO
+import base64
 
 
 # Create your views here.
 @api_view(['GET'])
 def save_exchange_rates(request):
     api_key = 'VZuN8cgkfjO4hxiYFqEyk6B1RKaJdeZz'
-    search_date = datetime.now().strftime('%Y%m%d')
+    today = datetime.now()
+    # 주말이면 이전 금요일
+    if today.weekday() in [5, 6]:
+        days_until_friday = (today.weekday() - 4) % 7
+        last_friday = today - timedelta(days=days_until_friday)
+        search_date = last_friday.strftime('%Y%m%d')
+        
+    else:
+        search_date = today.strftime('%Y%m%d')
+
+    # search_date = datetime.now().strftime('%Y%m%d')
     url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate={search_date}&data=AP01'
     # url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate=20230215&data=AP01'
     
@@ -59,7 +71,6 @@ def save_exchange_rates(request):
 def find_country_info(request, country, category):
     if request.method == "GET":
         country_info = ExchangeRates.objects.get(cur_unit=country)
-        print(country_info)
         # exchange_rate = country_info.values(category)
         # print('333',exchange_rate)
 
@@ -107,3 +118,102 @@ def exchange_all(request):
     # return JsonResponse(response, safe=False)  # safe=False를 추가함으로써, 딕셔너리 이외의 객체도 직렬화할 수 있음
 
 
+@api_view(['GET'])
+def crawling_news(request, keyword):
+    if request.method == "GET":
+        print('####', keyword)
+        # keyword = request.GET.get('keyword')
+        # keyword = 'USD'
+        # url = f'https://www.google.com/search?q={keyword}&newwindow=1&tbm=nws&ei=TUmuY5LlINeghwOfw7egDQ&start=0&sa=N&ved=2ahUKEwjSv42woqD8AhVX0GEKHZ_hDdQQ8tMDegQIBBAE&biw=763&bih=819&dpr=2.2'
+
+        # ChromeDriver 경로 설정
+        driver = webdriver.Chrome()
+        timesleep = random.randint(1, 10)
+        # 구글 뉴스 페이지 열기
+        driver.get(f'https://news.google.com/search?q={keyword}')
+        time.sleep(timesleep)
+
+        title_list = []
+        link_list = []
+        html = driver.page_source
+        soup = BeautifulSoup(html, 'html.parser')
+        h3_tag_list = soup.select('body h3')
+        for i, tag in enumerate(h3_tag_list):
+            if i >= 10:
+                break
+            title_list.append(tag.text)
+            a_tag = tag.find('a')
+            if a_tag:
+                link_list.append(a_tag['href'])
+        
+        # print("Titles:", title_list)
+        # print("Links:", link_list)
+
+        # WebDriver 종료
+        driver.quit()
+
+        response_data = {
+            'title_list': title_list,
+            'link_list': link_list,
+        }
+
+        # JsonResponse를 사용하여 JSON 응답을 생성
+        return JsonResponse(response_data)
+    
+
+
+
+
+
+    
+        # # 뉴스 제목 추출
+        # titles = driver.find_element(By.XPATH,"//a[@class='DY5T1d']")
+        # for title in titles:
+        #     print(title.text)
+        #     print(title.get_attribute('href'))
+
+
+
+        # driver = webdriver.Chrome()  # Chrome 드라이버 사용
+        # driver.maximize_window()
+
+        # # 나머지 코드
+        # page = 1
+        # title_list = []
+        # content_list = []
+        # link_list = []
+        # timesleep = random.randint(1, 10)
+
+        # for i in range(0, 20, 10):
+        #     driver.get(url)
+
+        #     # 일정 시간 동안 기다림 (1초 ~ 10초 사이의 랜덤한 시간)
+        #     time.sleep(timesleep)
+
+        #     print("*" * 10 + str(page) + "*" * 10)
+        #     page += 1
+
+        #     titles = driver.find_elements(By.CLASS_NAME, 'mCBkyc')
+        #     for title in titles:
+        #         title_list.append(title.text.replace(",", ""))
+
+        #     contents = driver.find_elements(By.CLASS_NAME, 'GI74Re')
+        #     for content in contents:
+        #         content_list.append(content.text.replace(",", ""))
+
+        #     links = driver.find_elements(By.CLASS_NAME, 'WlydOe')
+        #     for link in links:
+        #         link_list.append(link.get_attribute('href'))
+
+        # # WebDriver 종료
+        # driver.quit()
+
+        # # 응답 데이터를 JSON 형식으로 구성
+        # response_data = {
+        #     'title': title_list,
+        #     'content': content_list,
+        #     'link': link_list,
+        # }
+
+        # # JsonResponse를 사용하여 JSON 응답을 생성
+        # return JsonResponse(response_data)
