@@ -8,6 +8,12 @@ from imagekit.processors import Thumbnail
 from products.models import SavingProducts, DepositProducts
 
 
+
+class Favorite(models.Model):
+    favorite = models.CharField(max_length=225, null=True)
+
+
+
 class User(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
     nickname = models.CharField(max_length=255, unique=True)
@@ -26,12 +32,16 @@ class User(AbstractUser):
     salary = models.IntegerField(blank=True, null=True)
     # 리스트 데이터 저장을 위해 Text 형태로 저장
     # financial_products = models.TextField(blank=True, null=True)
+    financial_products_dep = models.ManyToManyField(DepositProducts)
+    financial_products_sav = models.ManyToManyField(SavingProducts)
     
-    fp_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
-    fp_object_id = models.PositiveIntegerField(blank=True, null=True)
-    content_object = GenericForeignKey('fp_content_type', 'fp_object_id')
+    # # 한 필드에 모델 두개 참조
+    # fp_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+    # fp_object_id = models.PositiveIntegerField(blank=True, null=True)
+    # content_object = GenericForeignKey('fp_content_type', 'fp_object_id')
 
-    favorite = models.TextField(blank=True, null=True)
+    favorite = models.ManyToManyField(Favorite)
+    # favorite = models.TextField(blank=True, null=True)
     # financial_products = models.JSONField(blank=True, null=True)
     # favorite = models.JSONField(blank=True, null=True)
 
@@ -67,7 +77,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         age = data.get("age")
         money = data.get("money")
         salary = data.get("salary")
-        # financial_products = data.get("financial_products")
+        financial_products_dep = data.get("financial_products_dep")
+        financial_products_sav = data.get("financial_products_sav")
+        
 
         profile_thumbnail = data.get("profile_thumbnail")
         mileage = data.get("mileage")
@@ -89,10 +101,16 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             user.money = money
         if salary:
             user.salary = salary
+        if financial_products_dep:
+            user.financial_products_dep = financial_products_dep
+        if financial_products_sav:
+            user.financial_products_sav = financial_products_sav
         if mileage:
             user.mileage = mileage
         if profile_thumbnail:
             user.profile_thumbnail = profile_thumbnail
+        if favorite:
+            user.favorite = favorite
         if mbti:
             user.mbti = mbti
         if main_bank:
@@ -115,16 +133,16 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         #     # if len(financial_products) > 1:
         #     #     financial_products = ','.join(financial_products)
         #     user_field(user, "financial_products", fin)
-        if favorite:
-            fav = ''
-            for i in favorite:
-                fav = str(i)
-            print(fav)
-            # user.favorite = fav.split(',')
-            # user.favorite.append(favorite)
-            # if len(favorite) > 1:
-            #     favorite = ','.join(favorite)
-            user_field(user, "favorite", fav)
+        # if favorite:
+        #     fav = ''
+        #     for i in favorite:
+        #         fav = str(i)
+        #     print(fav)
+        #     # user.favorite = fav.split(',')
+        #     # user.favorite.append(favorite)
+        #     # if len(favorite) > 1:
+        #     #     favorite = ','.join(favorite)
+        #     user_field(user, "favorite", fav)
         if "password1" in data:
             user.set_password(data["password1"])
         else:
@@ -137,7 +155,3 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         return user
     
 
-
-# class Favorite(models.Model):
-#     favorite = models.CharField(max_length=225, null=True)
-      

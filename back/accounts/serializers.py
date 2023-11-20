@@ -2,8 +2,16 @@ from rest_framework import serializers
 from allauth.account import app_settings as allauth_settings
 from allauth.utils import get_username_max_length
 from allauth.account.adapter import get_adapter
-from .models import User
+from .models import User, Favorite
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from products.serializers import DepositProductsSerializer, SavingProductsSerializer
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+            model = Favorite
+            fields = '__all__'
+
 
 class CustomRegisterSerializer(RegisterSerializer):
     # 추가할 필드들을 정의합니다.
@@ -15,12 +23,15 @@ class CustomRegisterSerializer(RegisterSerializer):
     age = serializers.IntegerField(required=True)
     money = serializers.IntegerField(required=False)
     salary = serializers.IntegerField(required=False)
+    financial_products_dep = DepositProductsSerializer(many=True, allow_null=True, required=False)
+    financial_products_sav = SavingProductsSerializer(many=True, allow_null=True, required=False)
     # financial_products = serializers.ListField(child=serializers.CharField(), required=False)
     # financial_products = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     profile_thumbnail = serializers.ImageField(required=False)
     # mileage = serializers.IntegerField(required=False)
-    favorite = serializers.ListField(child=serializers.CharField(), required=False)
+    favorite = FavoriteSerializer(many=True, allow_null=True, required=False)
+    # favorite = serializers.ListField(child=serializers.CharField(), required=False)
     # favorite = serializers.ListField(child=serializers.IntegerField(), required=False)
     mbti = serializers.CharField(
         max_length=10,
@@ -37,6 +48,8 @@ class CustomRegisterSerializer(RegisterSerializer):
             'age': self.validated_data.get('age', ''),
             'money': self.validated_data.get('money', ''),
             'salary': self.validated_data.get('salary', ''),
+            'financial_products_dep': self.validated_data.get('financial_products_dep', ''),
+            'financial_products_sav': self.validated_data.get('financial_products_sav', ''),
             # 'financial_products': self.validated_data.get('financial_products', ''),
             'profile_thumbnail': self.validated_data.get('profile_thumbnail', ''),
             'mileage': self.validated_data.get('mileage', ''),
