@@ -22,13 +22,16 @@ def products_data(request):
             save_data = {
                 'fin_prdt_cd': li.get('fin_prdt_cd'),
                 'dcls_month': li.get('dcls_month'),
+                'fin_co_no': li.get('fin_co_no'),
                 'kor_co_nm': li.get('kor_co_nm'),
                 'fin_prdt_nm': li.get('fin_prdt_nm'),
                 'etc_note': li.get('etc_note'),
                 'join_deny': li.get('join_deny'),
                 'join_member': li.get('join_member'),
                 'join_way': li.get('join_way'),
-                'spcl_cnd': li.get('spcl_cnd')
+                'spcl_cnd': li.get('spcl_cnd'),
+                'max_limit': li.get('max_limit'),
+                'mtrt_int': li.get('mtrt_int'),
             }
             serializer = DepositProductsSerializer(data=save_data)
             if serializer.is_valid(raise_exception=True):
@@ -37,6 +40,7 @@ def products_data(request):
     for li in response_dep.get('result').get('optionList'):
         save_data = {
             'fin_prdt_cd': li.get('fin_prdt_cd'),
+            'intr_rate_type': li.get('intr_rate_type'),
             'intr_rate_type_nm': li.get('intr_rate_type_nm'),
             'intr_rate': li.get('intr_rate'),
             'intr_rate2': li.get('intr_rate2'),
@@ -57,13 +61,16 @@ def products_data(request):
             save_data = {
                 'fin_prdt_cd': li.get('fin_prdt_cd'),
                 'dcls_month': li.get('dcls_month'),
+                'fin_co_no': li.get('fin_co_no'),
                 'kor_co_nm': li.get('kor_co_nm'),
                 'fin_prdt_nm': li.get('fin_prdt_nm'),
                 'etc_note': li.get('etc_note'),
                 'join_deny': li.get('join_deny'),
                 'join_member': li.get('join_member'),
                 'join_way': li.get('join_way'),
-                'spcl_cnd': li.get('spcl_cnd')
+                'spcl_cnd': li.get('spcl_cnd'),
+                'max_limit': li.get('max_limit'),
+                'mtrt_int': li.get('mtrt_int'),
             }
             serializer = SavingProductsSerializer(data=save_data)
             if serializer.is_valid(raise_exception=True):
@@ -72,6 +79,7 @@ def products_data(request):
     for li in response_sav.get('result').get('optionList'):
         save_data = {
             'fin_prdt_cd': li.get('fin_prdt_cd'),
+            'intr_rate_type': li.get('intr_rate_type'),
             'intr_rate_type_nm': li.get('intr_rate_type_nm'),
             'intr_rate': li.get('intr_rate'),
             'intr_rate2': li.get('intr_rate2'),
@@ -99,6 +107,22 @@ def deposit_list(request):
 def saving_list(request):
     products = SavingProducts.objects.all()
     serializer = SavingProductsSerializer(products, many=True)
+    return Response(serializer.data)
+
+
+# 예금 상품 단일 조회
+@api_view(['GET'])
+def deposit_product(request, fin_prdt_cd):
+    product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+    serializer = DepositProductsSerializer(product)
+    return Response(serializer.data)
+
+
+# 적금 상품 단일 조회
+@api_view(['GET'])
+def saving_product(request, fin_prdt_cd):
+    product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+    serializer = SavingProductsSerializer(product)
     return Response(serializer.data)
 
 
