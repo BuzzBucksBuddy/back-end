@@ -11,12 +11,6 @@ from .serializers import CommentSerializer, ArticleListSerializer, ArticleSerial
 from .models import Article, Comment, ArticleBankCategory, ArticleProductCategory
 from products.models import SavingProducts, DepositProducts
 
-# 로그인 필요 =>
-# 게시글 작성, 수정, 삭제
-# 코멘트 작성, 수정, 삭제
-# 게시글 좋아요
-# 코멘트 좋아요
-
 
 # 게시글 CREATE
 @api_view(['POST'])
@@ -36,7 +30,7 @@ def article_create(request):
 @api_view(['GET'])
 def article_list(request):
     if request.method == 'GET':
-        articles = Article.objects.all()
+        articles = Article.objects.all().order_by("-updated_at")
         serializer = ArticleListSerializer(articles, many=True)
         return Response(serializer.data)
 
@@ -49,6 +43,32 @@ def article_detail(request, article_pk):
     if request.method == 'GET':
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
+
+
+# 게시글 categorized READ
+@api_view(['GET'])
+def article_categorize(request, product_pk, bank_pk):
+    if request.method == 'GET':
+        if (product_pk == 0) and (bank_pk == 0):
+            articles = Article.objects.all().order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
+            
+        elif product_pk != 0 and bank_pk == 0:
+            articles = Article.objects.filter(article_product_category=product_pk).order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
+        
+        elif product_pk == 0 and bank_pk != 0:
+            articles = Article.objects.filter(article_bank_category=bank_pk).order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
+
+        else:
+            print('!!!')
+            articles = Article.objects.filter(article_bank_category=bank_pk, article_product_category=product_pk).order_by("-updated_at")
+            serializer = ArticleListSerializer(articles, many=True)
+            return Response(serializer.data)
 
 
 # 게시글 DELETE, UPDATE
