@@ -12,7 +12,7 @@ class ArticleProductCategory(models.Model):
 
 class Article(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles', null=True)
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles')
     article_bank_category = models.ForeignKey(ArticleBankCategory, on_delete=models.CASCADE)
     article_product_category = models.ForeignKey(ArticleProductCategory, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
@@ -20,12 +20,15 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_locked = models.BooleanField(default=False)
+    password = models.CharField(max_length=10, default=None, null=True)
 
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_comments')
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     content = models.TextField()
-    is_locked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_locked = models.BooleanField(default=False)
+    password = models.CharField(max_length=10, default=None, null=True)
