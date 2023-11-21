@@ -13,6 +13,7 @@ from .models import User, CustomAccountAdapter, Favorite
 from products.models import DepositProducts, SavingProducts
 from .serializers import CustomRegisterSerializer, FavoriteSerializer, UpdateUserSerializer
 
+import random
 
 # Create your views here.
 
@@ -70,3 +71,25 @@ def favorite_select(request, favorite_pk):
             #         raise NotFound()
             # User.favorites.set(favorites)
             # return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def users_favorite(request):
+    # me = get_object_or_404(get_user_model(), pk=request.user.id).id
+    me = Favorite.user_set.get()
+    # my = CustomRegisterSerializer(request.user)['favorite']
+    print(me, '######')
+    for myfavorite in my:
+        print(myfavorite)
+    # me = get_object_or_404(get_user_model(), pk=request.user.id)
+    my_favorites = Favorite.user_set.filter()
+    print(my_favorites)
+    # favorite = random.sample(my_favorites, 1)
+    # print(favorite,'000')
+    # users = get_list_or_404(get_user_model()).filter(favorite_id)
+    # for user in users:
+    #     if favorite in user.favorite:
+    #         pass
+
+    return Response({'message': 'favorite 추천 ok?'})
