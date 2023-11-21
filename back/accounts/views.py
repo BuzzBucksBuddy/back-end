@@ -16,7 +16,7 @@ from .serializers import CustomRegisterSerializer, FavoriteSerializer
 
 # Create your views here.
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 def my_profile(request):
     # user = User.objects.get(pk=request.user.id)   ## 직접참조 말고 변경
@@ -26,27 +26,40 @@ def my_profile(request):
     
     # else:
     #     return Response({'detail': '인증이 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
-    elif request.method == 'POST':
-        serializer = CustomRegisterSerializer(request.user, data=request.data, partial=True)
+    elif request.method == 'PUT':
+        print(request.user.id)
+        user = get_object_or_404(get_user_model(), pk=request.user.id)
+        print(type(user))
+        serializer = CustomRegisterSerializer(user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            print(request.user)
+            serializer.save(request)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def favorite_category(request):
     if request.method == "GET":
         favorites = Favorite.objects.all()
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data)
-    
-    elif request.method == "POST":
-        print('여기 오나?')
-        serializer = CustomRegisterSerializer(request.user, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def favorite_select(request, favorite_pk):
+    favorite = Favorite.objects.get(pk=favorite_pk)
+    if request.method == "POST":
+        if request.user in favorite.user_set.all():
+            favorite.user_set.remove(request.user)
+        else:
+            favorite.user_set.add(request.user)
+        return Response({'message':'This is my favorite thing.'})
+        # serializer = CustomRegisterSerializer(request.user, data=request.data, partial=True)
+        # if serializer.is_valid(raise_exception=True):
+        #     serializer.save(user=request.user)
             
             # favorites = []
             # for favorite_id in request.data.get('favorites'):
@@ -56,4 +69,4 @@ def favorite_category(request):
             #     except:
             #         raise NotFound()
             # User.favorites.set(favorites)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            # return Response(serializer.data, status=status.HTTP_200_OK)

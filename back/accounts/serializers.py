@@ -39,11 +39,11 @@ class CustomRegisterSerializer(RegisterSerializer):
     )
     main_bank = serializers.CharField(max_length=30, required=False)
 
+
     def get_cleaned_data(self):
         return {
             'username': self.validated_data.get('username', ''),
             'email': self.validated_data.get('email', ''),
-            'password1': self.validated_data.get('password1', ''),
             'nickname': self.validated_data.get('nickname', ''),
             'age': self.validated_data.get('age', ''),
             'money': self.validated_data.get('money', ''),
@@ -56,6 +56,9 @@ class CustomRegisterSerializer(RegisterSerializer):
             'favorite': self.validated_data.get('favorite', ''),
             'mbti': self.validated_data.get('mbti', ''),
             'main_bank': self.validated_data.get('main_bank', ''),
+            'password1': self.validated_data.get('password1', ''),
+            'password2': self.validated_data.get('password2', ''),
+            # 'password': self.validated_data.get('password', ''),
         }
     
     def save(self, request):
