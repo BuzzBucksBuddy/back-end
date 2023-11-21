@@ -90,6 +90,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('nickname',
+                  'email',
                   'profile_thumbnail', 
                   'money',  
                   'salary',  

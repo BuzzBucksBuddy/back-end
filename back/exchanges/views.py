@@ -15,6 +15,7 @@ from .serializers import ExchangeRatesSerializer
 ## crawling
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 # import matplotlib.pyplot as plt
 from io import BytesIO
@@ -126,9 +127,12 @@ def crawling_news(request, keyword):
         # keyword = 'USD'
         # url = f'https://www.google.com/search?q={keyword}&newwindow=1&tbm=nws&ei=TUmuY5LlINeghwOfw7egDQ&start=0&sa=N&ved=2ahUKEwjSv42woqD8AhVX0GEKHZ_hDdQQ8tMDegQIBBAE&biw=763&bih=819&dpr=2.2'
 
-        # ChromeDriver 경로 설정
-        driver = webdriver.Chrome()
-        timesleep = random.randint(1, 10)
+        ## ChromeDriver 경로 설정
+        # Chrome 옵션 설정(option: 창안뜨게)
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        driver = webdriver.Chrome(options=chrome_options)
+        timesleep = random.randint(1, 7)
         # 구글 뉴스 페이지 열기
         driver.get(f'https://news.google.com/search?q={keyword}')
         time.sleep(timesleep)
@@ -149,7 +153,7 @@ def crawling_news(request, keyword):
         # print("Titles:", title_list)
         # print("Links:", link_list)
 
-        # WebDriver 종료
+        ## WebDriver 종료
         driver.quit()
 
         response_data = {
