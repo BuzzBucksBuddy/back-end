@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 
 from .models import User, CustomAccountAdapter, Favorite
 from products.models import DepositProducts, SavingProducts
-from .serializers import CustomRegisterSerializer, FavoriteSerializer
+from .serializers import CustomRegisterSerializer, FavoriteSerializer, UpdateUserSerializer
 
 
 # Create your views here.
@@ -30,10 +30,10 @@ def my_profile(request):
         print(request.user.id)
         user = get_object_or_404(get_user_model(), pk=request.user.id)
         print(type(user))
-        serializer = CustomRegisterSerializer(user, data=request.data, partial=True)
+        serializer = UpdateUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             print(request.user)
-            serializer.save(request)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
