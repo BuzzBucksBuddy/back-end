@@ -5,7 +5,7 @@ from allauth.account.adapter import get_adapter
 from .models import User, Favorite
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from products.serializers import DepositProductsSerializer, SavingProductsSerializer
-
+from django.contrib.auth import get_user_model
 
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,4 +83,17 @@ class CustomRegisterSerializer(RegisterSerializer):
         #     if password1 != password2:
         #         raise serializers.ValidationError("비밀번호가 일치하지 않습니다.")
 
-        
+
+
+###### 유저 정보 수정 ######
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('nickname',
+                  'profile_thumbnail', 
+                  'money',  
+                  'salary',  
+                  'mbti',
+                  'main_bank',
+                  'mileage',
+                )
