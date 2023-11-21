@@ -30,7 +30,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     profile_thumbnail = serializers.ImageField(required=False)
     # mileage = serializers.IntegerField(required=False)
-    favorite = FavoriteSerializer(many=True, allow_null=True, required=False)
+    favorite = FavoriteSerializer(many=True, allow_null=True, required=False, read_only=True)
     # favorite = serializers.ListField(child=serializers.CharField(), required=False)
     # favorite = serializers.ListField(child=serializers.IntegerField(), required=False)
     mbti = serializers.CharField(
@@ -62,6 +62,22 @@ class CustomRegisterSerializer(RegisterSerializer):
         adapter = get_adapter()
         user = adapter.new_user(request)
         self.cleaned_data = self.get_cleaned_data()
+
+        # 기존 User 정보 저장
         adapter.save_user(request, user, self)
         self.custom_signup(request, user)
+       
         return user
+    
+    # def update(self, instance, validated_data):
+    #     print("Validated: ", validated_data)
+
+
+        # # 'password1' 및 'password2'가 데이터에 있는지 확인 후 액세스
+        # password1 = self.cleaned_data.get('password1')
+        # password2 = self.cleaned_data.get('password2')
+        # if password1 is not None and password2 is not None:
+        #     if password1 != password2:
+        #         raise serializers.ValidationError("비밀번호가 일치하지 않습니다.")
+
+        
