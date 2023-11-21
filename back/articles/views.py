@@ -204,7 +204,7 @@ def article_like(request, article_pk):
         else:
             article.like_users.add(request.user)
         return Response({ 'message': 'like_you?'})
-    
+
 
 # 코멘트 좋아요
 @api_view(['POST'])
