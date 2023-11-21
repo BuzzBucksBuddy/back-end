@@ -84,8 +84,16 @@ class CustomRegisterSerializer(RegisterSerializer):
         #         raise serializers.ValidationError("비밀번호가 일치하지 않습니다.")
 
 
+
+###### 유저 정보 수정 ######
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('nickname',)
-        
+        fields = ('nickname',
+                  'profile_thumbnail', 
+                  'money',  
+                  'salary',  
+                  'mbti',
+                  'main_bank',
+                  'mileage',
+                )
