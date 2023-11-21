@@ -32,8 +32,8 @@ class User(AbstractUser):
     salary = models.IntegerField(blank=True, null=True)
     # 리스트 데이터 저장을 위해 Text 형태로 저장
     # financial_products = models.TextField(blank=True, null=True)
-    financial_products_dep = models.ManyToManyField(DepositProducts)
-    financial_products_sav = models.ManyToManyField(SavingProducts)
+    financial_products_dep = models.ManyToManyField(DepositProducts, related_name='dep_users')
+    financial_products_sav = models.ManyToManyField(SavingProducts, related_name='sav_users')
     
     # # 한 필드에 모델 두개 참조
     # fp_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
