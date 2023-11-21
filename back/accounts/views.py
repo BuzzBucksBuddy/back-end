@@ -14,6 +14,7 @@ from products.models import DepositProducts, SavingProducts
 from .serializers import CustomRegisterSerializer, FavoriteSerializer, UpdateUserSerializer
 
 import random
+from django.db.models import Count
 
 # Create your views here.
 
@@ -74,23 +75,82 @@ def favorite_select(request, favorite_pk):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def users_age(request, age):
+    set_range = 5
+    min_age = 1
+    if (age - set_range) > 1:
+        min_age = age - set_range
+    users = get_user_model().objects.filter(age__range=[min_age, age + set_range])
 
-def users_age(request):
-    # user = get_object_or_404(get_user_model(), pk=request.user.id)
-    age = 10
-    users = get_list_or_404(get_user_model())
-    filtered_users = []
-    dep_products = []
-    sav_products = []
-    for user in users:
-        if user.age in range(age - 2, age + 3):
-            filtered_users.append(user)
-    for user in filtered_users:
-        print(user)
-        dep_products.append(user.financial_products_dep)
-        sav_products.append(user.financial_products_sav)
-    print(type(dep_products))
-    return Response({'message': 'ok?'})
+    all_user_financial_products_dep = DepositProducts.objects.filter(dep_users__in=users)
+    financial_products_dep_counts = all_user_financial_products_dep.values('id').annotate(count=Count('id'))
+    sorted_financial_products_dep = financial_products_dep_counts.order_by('-count')
+    most_financial_products_dep = list(sorted_financial_products_dep[:5])
+
+    all_user_financial_products_sav = SavingProducts.objects.filter(sav_users__in=users)
+    financial_products_sav_counts = all_user_financial_products_sav.values('id').annotate(count=Count('id'))
+    sorted_financial_products_sav = financial_products_sav_counts.order_by('-count')
+    most_financial_products_sav = list(sorted_financial_products_sav[:5])
+
+    response_data = {
+        'most_financial_products_dep': most_financial_products_dep,
+        'most_financial_products_sav': most_financial_products_sav,
+    }
+    return Response(response_data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def users_money(request, money):
+    set_range = 10000000
+    min_money = 0
+    if (money - set_range) > 0:
+        min_money = money - set_range
+    users = get_user_model().objects.filter(money__range=[min_money, money + set_range])
+
+    all_user_financial_products_dep = DepositProducts.objects.filter(dep_users__in=users)
+    financial_products_dep_counts = all_user_financial_products_dep.values('id').annotate(count=Count('id'))
+    sorted_financial_products_dep = financial_products_dep_counts.order_by('-count')
+    most_financial_products_dep = list(sorted_financial_products_dep[:5])
+
+    all_user_financial_products_sav = SavingProducts.objects.filter(sav_users__in=users)
+    financial_products_sav_counts = all_user_financial_products_sav.values('id').annotate(count=Count('id'))
+    sorted_financial_products_sav = financial_products_sav_counts.order_by('-count')
+    most_financial_products_sav = list(sorted_financial_products_sav[:5])
+
+    response_data = {
+        'most_financial_products_dep': most_financial_products_dep,
+        'most_financial_products_sav': most_financial_products_sav,
+    }
+    return Response(response_data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def users_salary(request, salary):
+    set_range = 5000000
+    min_salary = 0
+    if (salary - set_range) > 0:
+        min_salary = salary-set_range
+    users = get_user_model().objects.filter(salary__range=[min_salary, salary + set_range])
+
+    all_user_financial_products_dep = DepositProducts.objects.filter(dep_users__in=users)
+    financial_products_dep_counts = all_user_financial_products_dep.values('id').annotate(count=Count('id'))
+    sorted_financial_products_dep = financial_products_dep_counts.order_by('-count')
+    most_financial_products_dep = list(sorted_financial_products_dep[:5])
+
+    all_user_financial_products_sav = SavingProducts.objects.filter(sav_users__in=users)
+    financial_products_sav_counts = all_user_financial_products_sav.values('id').annotate(count=Count('id'))
+    sorted_financial_products_sav = financial_products_sav_counts.order_by('-count')
+    most_financial_products_sav = list(sorted_financial_products_sav[:5])
+
+    response_data = {
+        'most_financial_products_dep': most_financial_products_dep,
+        'most_financial_products_sav': most_financial_products_sav,
+    }
+    return Response(response_data)
+
 
 @permission_classes([IsAuthenticated])
 def users_favorite(request):
@@ -112,3 +172,30 @@ def users_favorite(request):
 
     return Response({'message': 'favorite 추천 ok?'})
 
+
+@api_view(['GET'])
+def dep_users(reqest, fin_prdt_cd):
+    product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+    users = get_user_model().objects.filter(financial_products_dep__pk=product.id)
+    users_id = []
+    for user in users:
+        users_id.append(user.id)
+
+    response_data = {
+        'users': users_id
+    }
+    return Response(response_data)
+
+
+@api_view(['GET'])
+def sav_users(reqest, fin_prdt_cd):
+    product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+    users = get_user_model().objects.filter(financial_products_sav__pk=product.id)
+    users_id = []
+    for user in users:
+        users_id.append(user.id)
+
+    response_data = {
+        'users': users_id
+    }
+    return Response(response_data)
