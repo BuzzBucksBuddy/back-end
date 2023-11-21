@@ -71,6 +71,8 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         data = form.cleaned_data
         first_name = data.get("first_name")
         last_name = data.get("last_name")
+        password1 = data.get("password1")
+        password2 = data.get("password2")
         email = data.get("email")
         username = data.get("username")
         nickname = data.get("nickname")
