@@ -29,12 +29,9 @@ def my_profile(request):
     # else:
     #     return Response({'detail': '인증이 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
     elif request.method == 'PUT':
-        print(request.user.id)
         user = get_object_or_404(get_user_model(), pk=request.user.id)
-        print(type(user))
         serializer = UpdateUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            print(request.user)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
