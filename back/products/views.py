@@ -144,3 +144,79 @@ def saving_options(request, fin_prdt_cd):
     options = product.sav_option.all()
     serializer = SavingOptionsSerializer(options, many=True)
     return Response(serializer.data)
+
+
+# 예금 상품 은행 별 조회
+@api_view(['GET'])
+def deposit_filtered(request, kor_co_nm):
+    if request.method == 'GET':
+        if kor_co_nm == '선택 안함':
+            products = DepositProducts.objects.all()
+            serializer = DepositProductsSerializer(products, many=True)
+            return Response(serializer.data)
+        else:
+            products = DepositProducts.objects.filter(kor_co_nm__contains=kor_co_nm)
+            serializer = DepositProductsSerializer(products, many=True)
+            return Response(serializer.data)
+
+
+# 적금 상품 은행 별 조회
+@api_view(['GET'])
+def saving_filtered(request, kor_co_nm):
+    if request.method == 'GET':
+        if kor_co_nm == '선택 안함':
+            products = SavingProducts.objects.all()
+            serializer = SavingProductsSerializer(products, many=True)
+            return Response(serializer.data)
+        else:
+            products = SavingProducts.objects.filter(kor_co_nm__contains=kor_co_nm)
+            serializer = SavingProductsSerializer(products, many=True)
+            return Response(serializer.data)
+
+
+# 예금 옵션 카테고라이즈
+@api_view(['GET'])
+def deposit_categorize(request, fin_prdt_cd, save_trm):
+    if request.method == 'GET':
+        product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+        # 모두 가져오기
+        if save_trm == 0:
+            options = product.dep_option.all()
+            serializer = DepositOptionsSerializer(options, many=True)
+            return Response(serializer.data)
+        # 저축 기간 필터링
+        else:
+            options = product.dep_option.filter(save_trm=save_trm)
+            serializer = DepositOptionsSerializer(options, many=True)
+            return Response(serializer.data)
+
+
+# 적금 상품 카테고라이즈
+@api_view(['GET'])
+def saving_categorize(request, fin_prdt_cd, save_trm, rsrv_type_nm):
+    if request.method == 'GET':
+        product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+        # 모두 가져오기
+        if rsrv_type_nm == '선택 안함':
+            # 모두 가져오기
+            if save_trm == 0:
+                options = product.sav_option.all()
+                serializer = SavingOptionsSerializer(options, many=True)
+                return Response(serializer.data)
+            # 저축 기간 필터링
+            else:
+                options = product.sav_option.filter(save_trm=save_trm)
+                serializer = SavingOptionsSerializer(options, many=True)
+                return Response(serializer.data)
+        # 적립 유형 필터링
+        else:
+            # 모두 가져오기
+            if save_trm == 0:
+                options = product.sav_option.filter(rsrv_type_nm=rsrv_type_nm)
+                serializer = SavingOptionsSerializer(options, many=True)
+                return Response(serializer.data)
+            # 저축 기간 필터링
+            else:
+                options = product.sav_option.filter(rsrv_type_nm=rsrv_type_nm, save_trm=save_trm)
+                serializer = SavingOptionsSerializer(options, many=True)
+                return Response(serializer.data)
