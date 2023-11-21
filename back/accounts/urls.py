@@ -10,5 +10,5 @@ urlpatterns = [
 
     path('users-age/', views.users_age),
 
-    path('users_favorite/', views.users_favorite),
+    path('users_favorite/<int:favorite_pk>/', views.users_favorite),
 ]
