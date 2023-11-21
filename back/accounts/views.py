@@ -74,6 +74,24 @@ def favorite_select(request, favorite_pk):
 
 
 @api_view(['GET'])
+
+def users_age(request):
+    # user = get_object_or_404(get_user_model(), pk=request.user.id)
+    age = 10
+    users = get_list_or_404(get_user_model())
+    filtered_users = []
+    dep_products = []
+    sav_products = []
+    for user in users:
+        if user.age in range(age - 2, age + 3):
+            filtered_users.append(user)
+    for user in filtered_users:
+        print(user)
+        dep_products.append(user.financial_products_dep)
+        sav_products.append(user.financial_products_sav)
+    print(type(dep_products))
+    return Response({'message': 'ok?'})
+
 @permission_classes([IsAuthenticated])
 def users_favorite(request):
     # me = get_object_or_404(get_user_model(), pk=request.user.id).id
@@ -93,3 +111,4 @@ def users_favorite(request):
     #         pass
 
     return Response({'message': 'favorite 추천 ok?'})
+
