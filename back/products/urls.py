@@ -15,4 +15,7 @@ urlpatterns = [
     path('saving-list/<str:kor_co_nm>/', views.saving_filtered),  # 적금 상품 은행별 조회
     path('deposit-categorize/<str:fin_prdt_cd>/<int:save_trm>/', views.deposit_categorize),
     path('saving-categorize/<str:fin_prdt_cd>/<int:save_trm>/<str:rsrv_type_nm>/', views.saving_categorize),
+
+    path('deposit-product/<str:fin_prdt_cd>/join/', views.become_my_dep_product),
+    path('saving-product/<str:fin_prdt_cd>/join/', views.become_my_sav_product),
 ]

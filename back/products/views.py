@@ -5,6 +5,9 @@ from .models import DepositProducts, SavingProducts, DepositOptions, SavingOptio
 from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer
 import requests
 
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
+
 
 # 상품 정보 전체 저장
 @api_view(['GET'])
@@ -220,3 +223,29 @@ def saving_categorize(request, fin_prdt_cd, save_trm, rsrv_type_nm):
                 options = product.sav_option.filter(rsrv_type_nm=rsrv_type_nm, save_trm=save_trm)
                 serializer = SavingOptionsSerializer(options, many=True)
                 return Response(serializer.data)
+
+
+# 예금 상품 가입하기
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def become_my_dep_product(request, fin_prdt_cd):
+    product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+    if request.method == 'POST':
+        if request.user in product.dep_users.all():
+            product.dep_users.remove(request.user)
+        else:
+            product.dep_users.add(request.user)
+        return Response({ 'message': 'okay!'})
+
+
+# 적금 상품 가입하기
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def become_my_sav_product(request, fin_prdt_cd):
+    product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+    if request.method == 'POST':
+        if request.user in product.sav_users.all():
+            product.sav_users.remove(request.user)
+        else:
+            product.sav_users.add(request.user)
+        return Response({ 'message': 'okay!'})
