@@ -143,7 +143,7 @@ def crawling_news(request, keyword):
         soup = BeautifulSoup(html, 'html.parser')
         h3_tag_list = soup.select('body h3')
         for i, tag in enumerate(h3_tag_list):
-            if i >= 10:
+            if i >= 9:
                 break
             title_list.append(tag.text)
             a_tag = tag.find('a')
