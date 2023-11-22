@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('deposit-options/<str:option_pk>/join/', views.become_my_dep_option),  # 예금 상품 가입
     path('saving-options/<str:option_pk>/join/', views.become_my_sav_option),  # 적금 상품 가입
+    
+    path('goDetail/<str:pdt_name>/', views.find_product),
 ]

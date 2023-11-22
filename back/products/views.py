@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from .models import DepositProducts, SavingProducts, DepositOptions, SavingOptions
 from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer
 import requests
@@ -237,3 +237,29 @@ def become_my_sav_option(request, option_pk):
         else:
             option.sav_users.add(request.user)
         return Response({ 'message': 'okay!'})
+
+
+# 상품이름으로 상품 찾기
+@api_view(['GET'])
+def find_product(request, pdt_name):
+    product_dep = DepositProducts.objects.filter(fin_prdt_nm=pdt_name).first()
+    print(product_dep)
+    product_sav = SavingProducts.objects.filter(fin_prdt_nm=pdt_name).first()
+    if product_dep:
+        product = product_dep
+        type = 'dep'
+        productId = product.fin_prdt_cd
+    elif product_sav:
+        product = product_sav
+        type = 'sav'
+        productId = product.fin_prdt_cd
+    else:
+        # 두 모델에서 모두 해당 상품명을 찾지 못한 경우
+        raise Http404("Product not found")
+    print(type, productId)
+    response_data = {
+        'type':type, 
+        'productId':productId
+        }
+    return Response(response_data)
+    # return Response({ 'message': 'okay!'})
