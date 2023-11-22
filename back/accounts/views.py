@@ -236,13 +236,13 @@ def my_intr_rate_graph(request):
     ## 내가 가입한 예금
     my_options_dep = DepositOptions.objects.filter(dep_users__pk=user.id)
     ## 그 예금 상품
-    my_products_dep = DepositOptions.dep_option.filter(fin_prdt_cd__in=my_options_dep)
+    my_products_dep = DepositProducts.objects.filter(fin_prdt_cd__in=my_options_dep)
     # my_prodcuts_dep = DepositProducts.objects.filter(fin_prdt_cd__in=my_options_dep)
-    print('예금:', my_products_dep)
+    print('예금:', my_options_dep)
     # ## 내가 가입한 적금
     my_options_sav = SavingOptions.objects.filter(sav_users__pk=user.id)
     ## 그 적금 상품
-    my_products_sav = SavingOptions.dep_option.filter(fin_prdt_cd__in=my_options_sav)
+    my_products_sav = SavingProducts.objects.filter(fin_prdt_cd__in=my_options_sav)
     # my_prodcuts_sav = SavingProducts.objects.filter(fin_prdt_cd__in=my_options_sav)
     print('적금:', my_products_sav)
     
