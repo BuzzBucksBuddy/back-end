@@ -38,7 +38,6 @@ def my_profile(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def favorite_category(request):
     if request.method == "GET":
         favorites = Favorite.objects.all()
