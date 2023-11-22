@@ -16,6 +16,7 @@ def products_data(request):
     url_dep = f'http://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth={API_KEY}&topFinGrpNo=020000&pageNo=1'
     url_sav = f'http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json?auth={API_KEY}&topFinGrpNo=020000&pageNo=1'
 
+    # 예금 상품/옵션 데이터 가져오기
     response_dep = requests.get(url_dep).json()
 
     for li in response_dep.get('result').get('baseList'):
@@ -41,20 +42,22 @@ def products_data(request):
                 serializer.save()
     
     for li in response_dep.get('result').get('optionList'):
-        save_data = {
-            'fin_prdt_cd': li.get('fin_prdt_cd'),
-            'intr_rate_type': li.get('intr_rate_type'),
-            'intr_rate_type_nm': li.get('intr_rate_type_nm'),
-            'intr_rate': li.get('intr_rate'),
-            'intr_rate2': li.get('intr_rate2'),
-            'save_trm': li.get('save_trm'),
-        }
+        exist = DepositOptions.objects.filter(fin_prdt_cd__contains=li.get('fin_prdt_cd')) & DepositOptions.objects.filter(save_trm__contains=li.get('save_trm'))
+        if len(exist) == 0:
+            save_data = {
+                    'fin_prdt_cd': li.get('fin_prdt_cd'),
+                    'intr_rate_type': li.get('intr_rate_type'),
+                    'intr_rate_type_nm': li.get('intr_rate_type_nm'),
+                    'intr_rate': li.get('intr_rate'),
+                    'intr_rate2': li.get('intr_rate2'),
+                    'save_trm': li.get('save_trm'),
+            }
+            serializer = DepositOptionsSerializer(data=save_data)
+            product = DepositProducts.objects.get(fin_prdt_cd = save_data['fin_prdt_cd'])
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(product=product)
         
-        serializer = DepositOptionsSerializer(data=save_data)
-        product = DepositProducts.objects.get(fin_prdt_cd = save_data['fin_prdt_cd'])
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(product=product)
-    
+    # 적금 상품/옵션 데이터 가져오기
     response_sav = requests.get(url_sav).json()
 
     for li in response_sav.get('result').get('baseList'):
@@ -80,39 +83,24 @@ def products_data(request):
                 serializer.save()
     
     for li in response_sav.get('result').get('optionList'):
-        save_data = {
-            'fin_prdt_cd': li.get('fin_prdt_cd'),
-            'intr_rate_type': li.get('intr_rate_type'),
-            'intr_rate_type_nm': li.get('intr_rate_type_nm'),
-            'intr_rate': li.get('intr_rate'),
-            'intr_rate2': li.get('intr_rate2'),
-            'rsrv_type': li.get('rsrv_type'),
-            'rsrv_type_nm': li.get('rsrv_type_nm'),
-            'save_trm': li.get('save_trm'),
-        }
-        
-        serializer = SavingOptionsSerializer(data=save_data)
-        product = SavingProducts.objects.get(fin_prdt_cd = save_data['fin_prdt_cd'])
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(product=product)
+        exist = SavingOptions.objects.filter(fin_prdt_cd__contains=li.get('fin_prdt_cd')) & SavingOptions.objects.filter(save_trm__contains=li.get('save_trm')) & SavingOptions.objects.filter(rsrv_type_nm__contains=li.get('rsrv_type_nm'))
+        if len(exist) == 0:
+            save_data = {
+                'fin_prdt_cd': li.get('fin_prdt_cd'),
+                'intr_rate_type': li.get('intr_rate_type'),
+                'intr_rate_type_nm': li.get('intr_rate_type_nm'),
+                'intr_rate': li.get('intr_rate'),
+                'intr_rate2': li.get('intr_rate2'),
+                'rsrv_type': li.get('rsrv_type'),
+                'rsrv_type_nm': li.get('rsrv_type_nm'),
+                'save_trm': li.get('save_trm'),
+            }
+            serializer = SavingOptionsSerializer(data=save_data)
+            product = SavingProducts.objects.get(fin_prdt_cd = save_data['fin_prdt_cd'])
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(product=product)
     
     return JsonResponse({ 'message' : 'Okay!' })
-
-
-# 예금 상품 전체 조회
-@api_view(['GET'])
-def deposit_list(request):
-    products = DepositProducts.objects.all()
-    serializer = DepositProductsSerializer(products, many=True)
-    return Response(serializer.data)
-
-
-# 적금 상품 전체 조회
-@api_view(['GET'])
-def saving_list(request):
-    products = SavingProducts.objects.all()
-    serializer = SavingProductsSerializer(products, many=True)
-    return Response(serializer.data)
 
 
 # 예금 상품 단일 조회
@@ -194,7 +182,7 @@ def deposit_categorize(request, fin_prdt_cd, save_trm):
             return Response(serializer.data)
 
 
-# 적금 상품 카테고라이즈
+# 적금 옵션 카테고라이즈
 @api_view(['GET'])
 def saving_categorize(request, fin_prdt_cd, save_trm, rsrv_type_nm):
     if request.method == 'GET':
