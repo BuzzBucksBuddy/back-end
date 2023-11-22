@@ -31,7 +31,7 @@
 	"pk": 5,
 	"fields": {
 		"title": "스포츠",
-		"content": "스포츠.....?"
+		"content": "스포츠 정신을 가졌습니다"
 	}
 },{
 	"model": "accounts.Favorite",
@@ -52,14 +52,14 @@
 	"pk": 8,
 	"fields": {
 		"title": "맛집",
-		"content": "맛집등록하려고 지도앱 씁니다"
+		"content": "맛집 등록하려고 지도 앱 씁니다"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 9,
 	"fields": {
 		"title": "자동차",
-		"content": "자동차 유튜브를 좋아해요"
+		"content": "자동차 유튜브 좋아해요"
 	}
 },{
 	"model": "accounts.Favorite",

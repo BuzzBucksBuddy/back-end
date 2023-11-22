@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from allauth.account.adapter import DefaultAccountAdapter
 from imagekit.models import ProcessedImageField
 from imagekit.processors import Thumbnail
-from products.models import SavingProducts, DepositProducts
+from products.models import DepositProducts, SavingProducts, DepositOptions, SavingOptions
 
 
 
@@ -29,12 +29,12 @@ class User(AbstractUser):
     email = models.EmailField(max_length=255, blank=True, null=True, verbose_name='email address')
     mileage = models.IntegerField(default=0)
     age = models.IntegerField(default=0)
-    money = models.IntegerField(blank=True, null=True)
-    salary = models.IntegerField(blank=True, null=True)
+    money = models.IntegerField(default=0, blank=True, null=True)
+    salary = models.IntegerField(default=0, blank=True, null=True)
     # 리스트 데이터 저장을 위해 Text 형태로 저장
     # financial_products = models.TextField(blank=True, null=True)
-    financial_products_dep = models.ManyToManyField(DepositProducts, related_name='dep_users')
-    financial_products_sav = models.ManyToManyField(SavingProducts, related_name='sav_users')
+    financial_options_dep = models.ManyToManyField(DepositOptions, related_name='dep_users')
+    financial_options_sav = models.ManyToManyField(SavingOptions, related_name='sav_users')
     
     # # 한 필드에 모델 두개 참조
     # fp_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
@@ -80,8 +80,8 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         age = data.get("age")
         money = data.get("money")
         salary = data.get("salary")
-        financial_products_dep = data.get("financial_products_dep")
-        financial_products_sav = data.get("financial_products_sav")
+        financial_options_dep = data.get("financial_options_dep")
+        financial_options_sav = data.get("financial_options_sav")
         
 
         profile_thumbnail = data.get("profile_thumbnail")
@@ -104,10 +104,10 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             user.money = money
         if salary:
             user.salary = salary
-        if financial_products_dep:
-            user.financial_products_dep = financial_products_dep
-        if financial_products_sav:
-            user.financial_products_sav = financial_products_sav
+        if financial_options_dep:
+            user.financial_options_dep = financial_options_dep
+        if financial_options_sav:
+            user.financial_options_sav = financial_options_sav
         if mileage:
             user.mileage = mileage
         if profile_thumbnail:
