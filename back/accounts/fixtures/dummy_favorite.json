@@ -2,72 +2,84 @@
 	"model": "accounts.Favorite",
 	"pk": 1,
 	"fields": {
-		"favorite": "전자기기"
+		"title": "전자기기",
+		"content": "나는야 얼리어답터"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 2,
 	"fields": {
-		"favorite": "패션"
+		"title": "패션",
+		"content": "OOTD 기록러"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 3,
 	"fields": {
-		"favorite": "여행"
+		"title": "학문",
+		"content": "새로운 걸 배우는 게 좋아요"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 4,
 	"fields": {
-		"favorite": "스포츠"
+		"title": "여행",
+		"content": "침대보다 여행"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 5,
 	"fields": {
-		"favorite": "반려동물"
+		"title": "스포츠",
+		"content": "스포츠.....?"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 6,
 	"fields": {
-		"favorite": "커피"
+		"title": "반려동물",
+		"content": "집사는 주인님 모시려고 일합니다"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 7,
 	"fields": {
-		"favorite": "맛집"
+		"title": "커피",
+		"content": "1일 : N카페인"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 8,
 	"fields": {
-		"favorite": "자동차"
+		"title": "맛집",
+		"content": "맛집등록하려고 지도앱 씁니다"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 9,
 	"fields": {
-		"favorite": "부동산"
+		"title": "자동차",
+		"content": "자동차 유튜브를 좋아해요"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 10,
 	"fields": {
-		"favorite": "콘서트"
+		"title": "부동산",
+		"content": "내 취향의 집꾸미기"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 11,
 	"fields": {
-		"favorite": "부모님"
+		"title": "음악",
+		"content": "Music is My Life"
 	}
 },{
 	"model": "accounts.Favorite",
 	"pk": 12,
 	"fields": {
-		"favorite": "생일"
+		"title": "부모님",
+		"content": "내 인생의 기둥, 부모님"
 	}
 }]

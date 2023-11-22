@@ -10,7 +10,8 @@ from products.models import SavingProducts, DepositProducts
 
 
 class Favorite(models.Model):
-    favorite = models.CharField(max_length=225, null=True)
+    title = models.CharField(max_length=225, null=True)
+    content = models.TextField(null=True)
 
 
 
