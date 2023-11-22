@@ -226,25 +226,3 @@ def users_favorite(request, favorite_pk):
 #         'users': users_id
 #     }
 #     return Response(response_data)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def my_intr_rate_graph(request):
-    user = get_object_or_404(get_user_model(), pk=request.user.id)
-    # print(user)
-    ## 나의 가입한 예금
-    my_options_dep = DepositOptions.objects.filter(dep_users__pk=user.id)
-    print('예금:', my_options_dep)
-    ## 나의 가입한 적금
-    my_options_sav = SavingOptions.objects.filter(sav_users__pk=user.id)
-    print('적금:', my_options_sav)
-    
-    # 예금 이름들
-    # all_dev_name = DepositOptions.
-    # 예금 금리들
-    
-    # for dev_rate in 
-
-    
-    return Response({'message':'그래프용'})

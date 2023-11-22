@@ -15,6 +15,6 @@ urlpatterns = [
     path('deposit-options/<str:fin_prdt_cd>/', views.deposit_options),  # 예금 상품의 옵션 조회
     path('saving-options/<str:fin_prdt_cd>/', views.saving_options),  # 적금 상품의 옵션 조회
 
-    path('deposit-product/<str:fin_prdt_cd>/join/', views.become_my_dep_product),  # 예금 상품 가입
-    path('saving-product/<str:fin_prdt_cd>/join/', views.become_my_sav_product),  # 적금 상품 가입
+    path('deposit-options/<str:option_pk>/join/', views.become_my_dep_option),  # 예금 상품 가입
+    path('saving-options/<str:option_pk>/join/', views.become_my_sav_option),  # 적금 상품 가입
 ]

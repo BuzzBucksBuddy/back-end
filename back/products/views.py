@@ -216,24 +216,24 @@ def saving_categorize(request, fin_prdt_cd, save_trm, rsrv_type_nm):
 # 예금 상품 가입하기
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def become_my_dep_product(request, fin_prdt_cd):
-    product = DepositProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+def become_my_dep_option(request, option_pk):
+    option = DepositOptions.objects.get(id=option_pk)
     if request.method == 'POST':
-        if request.user in product.dep_users.all():
-            product.dep_users.remove(request.user)
+        if request.user in option.dep_users.all():
+            option.dep_users.remove(request.user)
         else:
-            product.dep_users.add(request.user)
+            option.dep_users.add(request.user)
         return Response({ 'message': 'okay!'})
 
 
 # 적금 상품 가입하기
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def become_my_sav_product(request, fin_prdt_cd):
-    product = SavingProducts.objects.get(fin_prdt_cd=fin_prdt_cd)
+def become_my_sav_option(request, option_pk):
+    option = SavingOptions.objects.get(id=option_pk)
     if request.method == 'POST':
-        if request.user in product.sav_users.all():
-            product.sav_users.remove(request.user)
+        if request.user in option.sav_users.all():
+            option.sav_users.remove(request.user)
         else:
-            product.sav_users.add(request.user)
+            option.sav_users.add(request.user)
         return Response({ 'message': 'okay!'})
