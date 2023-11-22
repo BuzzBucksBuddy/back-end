@@ -74,7 +74,7 @@ def favorite_select(request, favorite_pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def users_age(request, age):
-    set_range = 5
+    set_range = 3
     min_age = 1
     if (age - set_range) > 1:
         min_age = age - set_range
