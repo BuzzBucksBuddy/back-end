@@ -122,7 +122,6 @@ def exchange_all(request):
 @api_view(['GET'])
 def crawling_news(request, keyword):
     if request.method == "GET":
-        print('####', keyword)
         # keyword = request.GET.get('keyword')
         # keyword = 'USD'
         # url = f'https://www.google.com/search?q={keyword}&newwindow=1&tbm=nws&ei=TUmuY5LlINeghwOfw7egDQ&start=0&sa=N&ved=2ahUKEwjSv42woqD8AhVX0GEKHZ_hDdQQ8tMDegQIBBAE&biw=763&bih=819&dpr=2.2'
@@ -134,6 +133,10 @@ def crawling_news(request, keyword):
         driver = webdriver.Chrome(options=chrome_options)
         timesleep = random.randint(1, 7)
         # 구글 뉴스 페이지 열기
+        if '(' in keyword:
+            keyword = keyword[:3]
+        print(keyword)
+
         driver.get(f'https://news.google.com/search?q={keyword}')
         time.sleep(timesleep)
 
@@ -143,7 +146,7 @@ def crawling_news(request, keyword):
         soup = BeautifulSoup(html, 'html.parser')
         h3_tag_list = soup.select('body h3')
         for i, tag in enumerate(h3_tag_list):
-            if i >= 10:
+            if i >= 9:
                 break
             title_list.append(tag.text)
             a_tag = tag.find('a')

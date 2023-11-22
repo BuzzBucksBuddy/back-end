@@ -16,6 +16,9 @@ from .serializers import CustomRegisterSerializer, FavoriteSerializer, UpdateUse
 import random
 from django.db.models import Count
 
+# import matplotlib.pyplot as plt
+# import numpy as np
+
 # Create your views here.
 
 @api_view(['GET', 'PUT'])
@@ -235,42 +238,64 @@ def my_intr_rate_graph(request):
     # print(user)
     ## 내가 가입한 예금
     my_options_dep = DepositOptions.objects.filter(dep_users__pk=user.id)
-    ## 그 예금 상품
-    my_products_dep = DepositOptions.dep_option.filter(fin_prdt_cd__in=my_options_dep)
-    # my_prodcuts_dep = DepositProducts.objects.filter(fin_prdt_cd__in=my_options_dep)
-    print('예금:', my_products_dep)
-    # ## 내가 가입한 적금
+
+    # # ## 내가 가입한 적금
     my_options_sav = SavingOptions.objects.filter(sav_users__pk=user.id)
-    ## 그 적금 상품
-    my_products_sav = SavingOptions.dep_option.filter(fin_prdt_cd__in=my_options_sav)
-    # my_prodcuts_sav = SavingProducts.objects.filter(fin_prdt_cd__in=my_options_sav)
-    print('적금:', my_products_sav)
     
-    # 예금 상품 이름들
-    all_dep_name = []
-    for products_dep in my_products_dep:
-        all_dep_name.append(products_dep.fin_prdt_nm)
-        print('예금이름:', products_dep.fin_prdt_nm)
-        
-    # 예금 금리들
-    all_dep_rate = []
-    for products_dep in my_products_dep:
-        fin_prdt_cd = products_dep.fin_prdt_cd
-        rate_trm_6 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=6)
-        rate_trm_12 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=12)
-        rate_trm_24 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=24)
-        rate_trm_36 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=36)
+    # 내가 가진 예금 상품
+    all_product_names = []
+    all_intr_rates = []
+    all_intr_rates2 = []
+
+    for option in my_options_dep:
+        all_product_names.append(option.product.fin_prdt_nm)
+        all_intr_rates.append(option.intr_rate)
+        all_intr_rates2.append(option.intr_rate2)
 
 
+    for option in my_options_sav:
+        all_product_names.append(option.product.fin_prdt_nm)
+        all_intr_rates.append(option.intr_rate)
+        all_intr_rates2.append(option.intr_rate2)
 
-    # 적금 상품 이름들
-    all_sav_name = []
-    for sav_fin_prdt_nm in my_options_dep:
-        all_sav_name.append(sav_fin_prdt_nm)
-        print('적금이름:', sav_fin_prdt_nm)
-        
-    
-    # for dev_rate in 
+    response_data = {
+        'product_names': all_product_names,
+        'intr_rates': all_intr_rates,
+        'intr_rates2': all_intr_rates2,
+    }
+    return Response(response_data)
 
-    
-    return Response({'message':'그래프용'})
+
+    ####그래프###
+    # plt.figure(figsize=(12, 6))
+
+    # bar_width = 0.35
+    # index = np.arange(len(all_product_names))
+
+    # plt.bar(index, all_intr_rates, bar_width, label='Interest Rate')
+    # plt.bar(index + bar_width, all_intr_rates2, bar_width, label='Interest Rate2')
+
+    # plt.xlabel('Product Name')
+    # plt.ylabel('Interest Rate')
+    # plt.title('Interest Rate Comparison for Deposit and Saving Products')
+    # plt.xticks(index + bar_width / 2, all_product_names, rotation=45, ha='right')
+    # plt.legend()
+    # plt.tight_layout()
+    # plt.show()
+    # plt.figure(figsize=(10, 6))
+    # plt.bar(all_dep_name, all_dep_rate, label='Deposit Rate')
+    # plt.bar(all_dep_name, all_dep_rate2, label='Deposit Rate2', alpha=0.7)
+    # plt.bar(all_sav_name, all_sav_rate, label='Saving Rate')
+    # plt.bar(all_sav_name, all_sav_rate2, label='Saving Rate2', alpha=0.7)
+
+    # plt.xlabel('Product Name')
+    # plt.ylabel('Interest Rate')
+    # plt.title('Interest Rate Comparison for Deposit and Saving Products')
+    # plt.legend()
+    # plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for better visibility
+    # plt.tight_layout()
+
+
+    # return Response({'message':'그래프용'})
+
+   
