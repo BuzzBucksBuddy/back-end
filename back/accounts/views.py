@@ -233,16 +233,42 @@ def users_favorite(request, favorite_pk):
 def my_intr_rate_graph(request):
     user = get_object_or_404(get_user_model(), pk=request.user.id)
     # print(user)
-    ## 나의 가입한 예금
+    ## 내가 가입한 예금
     my_options_dep = DepositOptions.objects.filter(dep_users__pk=user.id)
-    print('예금:', my_options_dep)
-    ## 나의 가입한 적금
+    ## 그 예금 상품
+    my_products_dep = DepositOptions.dep_option.filter(fin_prdt_cd__in=my_options_dep)
+    # my_prodcuts_dep = DepositProducts.objects.filter(fin_prdt_cd__in=my_options_dep)
+    print('예금:', my_products_dep)
+    # ## 내가 가입한 적금
     my_options_sav = SavingOptions.objects.filter(sav_users__pk=user.id)
-    print('적금:', my_options_sav)
+    ## 그 적금 상품
+    my_products_sav = SavingOptions.dep_option.filter(fin_prdt_cd__in=my_options_sav)
+    # my_prodcuts_sav = SavingProducts.objects.filter(fin_prdt_cd__in=my_options_sav)
+    print('적금:', my_products_sav)
     
-    # 예금 이름들
-    # all_dev_name = DepositOptions.
+    # 예금 상품 이름들
+    all_dep_name = []
+    for products_dep in my_products_dep:
+        all_dep_name.append(products_dep.fin_prdt_nm)
+        print('예금이름:', products_dep.fin_prdt_nm)
+        
     # 예금 금리들
+    all_dep_rate = []
+    for products_dep in my_products_dep:
+        fin_prdt_cd = products_dep.fin_prdt_cd
+        rate_trm_6 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=6)
+        rate_trm_12 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=12)
+        rate_trm_24 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=24)
+        rate_trm_36 = DepositOptions.objects.filter(fin_prdt_cd=fin_prdt_cd, save_trm=36)
+
+
+
+    # 적금 상품 이름들
+    all_sav_name = []
+    for sav_fin_prdt_nm in my_options_dep:
+        all_sav_name.append(sav_fin_prdt_nm)
+        print('적금이름:', sav_fin_prdt_nm)
+        
     
     # for dev_rate in 
 

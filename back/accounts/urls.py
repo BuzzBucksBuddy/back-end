@@ -7,8 +7,8 @@ urlpatterns = [
     path('favorites/', views.favorite_category),
     path('favorites/<int:favorite_pk>/select/', views.favorite_select),
 
-    path('dep_users/<str:fin_prdt_cd>/', views.dep_users),
-    path('sav_users/<str:fin_prdt_cd>/', views.sav_users),
+    # path('dep_users/<str:fin_prdt_cd>/', views.dep_users),
+    # path('sav_users/<str:fin_prdt_cd>/', views.sav_users),
 
     path('users_age/<int:age>/', views.users_age),
     path('users_money/<int:money>/', views.users_money),
