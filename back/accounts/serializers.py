@@ -29,7 +29,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     # financial_products = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     profile_thumbnail = serializers.ImageField(required=False)
-    # mileage = serializers.IntegerField(required=False)
+    mileage = serializers.IntegerField(required=False)
     favorite = FavoriteSerializer(many=True, allow_null=True, required=False, read_only=True)
     # favorite = serializers.ListField(child=serializers.CharField(), required=False)
     # favorite = serializers.ListField(child=serializers.IntegerField(), required=False)
