@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse, Http404
 from .models import DepositProducts, SavingProducts, DepositOptions, SavingOptions
-from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer
+from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer, OneDepOptSerializer, OneSavOptSerializer
 import requests
 from random import shuffle
 from django.db.models import F
@@ -296,6 +296,21 @@ def find_product(request, pdt_name):
     # return Response({ 'message': 'okay!'})
 
 
+@api_view(['GET'])
+def one_dep_opt(request, opt_pk):
+    print(opt_pk)
+    option = DepositOptions.objects.get(pk=opt_pk)
+    print(option)
+    serializer = OneDepOptSerializer(option)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def one_sav_opt(request, opt_pk):
+    option = SavingOptions.objects.get(pk=opt_pk)
+    serializer = OneSavOptSerializer(option)
+    return Response(serializer.data)
+
 # 예금 랜덤 캐러셀
 @api_view(['GET'])
 def random_product_dep(request):
@@ -328,3 +343,4 @@ def random_product_sav(request):
 
     serializer_sav = SavingProductsSerializer(selected_pdt_sav, many=True)
     return Response(serializer_sav.data)
+

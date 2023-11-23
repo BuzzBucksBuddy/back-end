@@ -19,6 +19,12 @@ urlpatterns = [
     path('saving-options/<str:option_pk>/join/', views.become_my_sav_option),  # 적금 상품 가입
     
     path('goDetail/<str:pdt_name>/', views.find_product),
+
+
+    path('one-dep-opt/<int:opt_pk>/', views.one_dep_opt),
+    path('one-sav-opt/<int:opt_pk>/', views.one_sav_opt),
+
     path('random-product/dep/', views.random_product_dep),
     path('random-product/sav/', views.random_product_sav),
+
 ]
