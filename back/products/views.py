@@ -4,6 +4,8 @@ from django.http import JsonResponse, Http404
 from .models import DepositProducts, SavingProducts, DepositOptions, SavingOptions
 from .serializers import DepositProductsSerializer, DepositOptionsSerializer, SavingProductsSerializer, SavingOptionsSerializer, OneDepOptSerializer, OneSavOptSerializer
 import requests
+from random import shuffle
+from django.db.models import F
 
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -16,9 +18,22 @@ def products_data(request):
     url_dep = f'http://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth={API_KEY}&topFinGrpNo=020000&pageNo=1'
     url_sav = f'http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json?auth={API_KEY}&topFinGrpNo=020000&pageNo=1'
 
+    ## 테이블 리셋
+    # curr_data_dep = DepositProducts.objects.all()
+    # curr_data_sav = SavingProducts.objects.all()
+    # curr_data_dep_op = DepositOptions.objects.all()
+    # curr_data_sav_op = SavingOptions.objects.all()
+    # curr_data_dep.delete()
+    # curr_data_sav.delete()
+    # curr_data_dep_op.delete()
+    # curr_data_sav_op.delete()
+
+
     # 예금 상품/옵션 데이터 가져오기
     response_dep = requests.get(url_dep).json()
 
+    dep_products_count = 0  # 예금 상품 개수 초기화
+    
     for li in response_dep.get('result').get('baseList'):
         try:
             DepositProducts.objects.get(fin_prdt_cd = li.get('fin_prdt_cd'))
@@ -40,7 +55,9 @@ def products_data(request):
             serializer = DepositProductsSerializer(data=save_data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
+            dep_products_count += 1  # 예금 상품이 저장되면 개수 증가
     
+
     for li in response_dep.get('result').get('optionList'):
         exist = DepositOptions.objects.filter(fin_prdt_cd__contains=li.get('fin_prdt_cd')) & DepositOptions.objects.filter(save_trm__contains=li.get('save_trm'))
         if len(exist) == 0:
@@ -56,9 +73,14 @@ def products_data(request):
             product = DepositProducts.objects.get(fin_prdt_cd = save_data['fin_prdt_cd'])
             if serializer.is_valid(raise_exception=True):
                 serializer.save(product=product)
+            
+
         
     # 적금 상품/옵션 데이터 가져오기
     response_sav = requests.get(url_sav).json()
+
+    sav_products_count = 0  # 적금 상품 개수 초기화
+    
 
     for li in response_sav.get('result').get('baseList'):
         try:
@@ -81,6 +103,7 @@ def products_data(request):
             serializer = SavingProductsSerializer(data=save_data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
+            sav_products_count += 1  # 적금 상품이 저장되면 개수 증가
     
     for li in response_sav.get('result').get('optionList'):
         exist = SavingOptions.objects.filter(fin_prdt_cd__contains=li.get('fin_prdt_cd')) & SavingOptions.objects.filter(save_trm__contains=li.get('save_trm')) & SavingOptions.objects.filter(rsrv_type_nm__contains=li.get('rsrv_type_nm'))
@@ -99,8 +122,16 @@ def products_data(request):
             product = SavingProducts.objects.get(fin_prdt_cd = save_data['fin_prdt_cd'])
             if serializer.is_valid(raise_exception=True):
                 serializer.save(product=product)
+            
     
-    return JsonResponse({ 'message' : 'Okay!' })
+
+    response_data = {
+        'message': 'Okay!',
+        'deposit_products_count': dep_products_count,
+        'saving_products_count': sav_products_count,
+    }
+
+    return JsonResponse(response_data)
 
 
 # 예금 상품 단일 조회
@@ -279,3 +310,37 @@ def one_sav_opt(request, opt_pk):
     option = SavingOptions.objects.get(pk=opt_pk)
     serializer = OneSavOptSerializer(option)
     return Response(serializer.data)
+
+# 예금 랜덤 캐러셀
+@api_view(['GET'])
+def random_product_dep(request):
+    all_pdt_dep = DepositProducts.objects.all()
+
+    # 정렬해서 -> 셔플해서 랜덤으로 세우기
+    pdt_dep = all_pdt_dep.order_by(F('pk').desc())
+    # print(pdt_dep,'?')
+    pdt_random_dep = list(pdt_dep)
+    shuffle(pdt_random_dep)  # 섞음
+    print(pdt_random_dep)
+    selected_pdt_dep = pdt_random_dep[:20]
+
+    serializer_dep = DepositProductsSerializer(selected_pdt_dep, many=True)
+    return Response(serializer_dep.data)
+
+
+# 적금 랜덤 캐러셀
+@api_view(['GET'])
+def random_product_sav(request):
+    all_pdt_sav = SavingProducts.objects.all()
+
+    # 정렬해서 -> 셔플해서 랜덤으로 세우기
+    pdt_sav = all_pdt_sav.order_by(F('pk').desc())
+    print('ok?')
+    pdt_random_sav = list(pdt_sav)
+    shuffle(pdt_random_sav)  # 섞음
+    
+    selected_pdt_sav = pdt_random_sav[:5]
+
+    serializer_sav = SavingProductsSerializer(selected_pdt_sav, many=True)
+    return Response(serializer_sav.data)
+
