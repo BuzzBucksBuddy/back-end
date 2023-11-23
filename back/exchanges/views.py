@@ -35,7 +35,7 @@ def save_exchange_rates(request):
         
     else:
         search_date = today.strftime('%Y%m%d')
-
+    
     # search_date = datetime.now().strftime('%Y%m%d')
     url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate={search_date}&data=AP01'
     # url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate=20230215&data=AP01'
@@ -64,8 +64,7 @@ def save_exchange_rates(request):
         serializer = ExchangeRatesSerializer(data=save_data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-    
-    return JsonResponse({ 'message': 'okay'})
+    return JsonResponse({ 'message': '환율정보 저장완료'})
 
 
 @api_view(['GET'])
@@ -131,11 +130,11 @@ def crawling_news(request, keyword):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         driver = webdriver.Chrome(options=chrome_options)
-        timesleep = random.randint(1, 7)
+        timesleep = random.randint(1, 5)
         # 구글 뉴스 페이지 열기
         if '(' in keyword:
             keyword = keyword[:3]
-        print(keyword)
+        # print(keyword)
 
         driver.get(f'https://news.google.com/search?q={keyword}')
         time.sleep(timesleep)
@@ -151,7 +150,7 @@ def crawling_news(request, keyword):
             title_list.append(tag.text)
             a_tag = tag.find('a')
             if a_tag:
-                link_list.append(a_tag['href'])
+                link_list.append(a_tag['href'][2:])
         
         # print("Titles:", title_list)
         # print("Links:", link_list)
