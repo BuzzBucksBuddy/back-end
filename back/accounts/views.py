@@ -24,13 +24,10 @@ from django.db.models import Count
 @api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 def my_profile(request):
-    # user = User.objects.get(pk=request.user.id)   ## 직접참조 말고 변경
     if request.method == 'GET':
         serializer = CustomRegisterSerializer(request.user)   
         return Response(serializer.data)
-    
-    # else:
-    #     return Response({'detail': '인증이 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+
     elif request.method == 'PUT':
         user = get_object_or_404(get_user_model(), pk=request.user.id)
         serializer = UpdateUserSerializer(user, data=request.data, partial=True)
@@ -58,20 +55,7 @@ def favorite_select(request, favorite_pk):
         else:
             favorite.user_set.add(request.user)
         return Response({'message':'This is my favorite thing.'})
-        # serializer = CustomRegisterSerializer(request.user, data=request.data, partial=True)
-        # if serializer.is_valid(raise_exception=True):
-        #     serializer.save(user=request.user)
-            
-            # favorites = []
-            # for favorite_id in request.data.get('favorites'):
-            #     try:
-            #         favorite = Favorite.objects.get(id=favorite_id)
-            #         favorites.append(favorite)
-            #     except:
-            #         raise NotFound()
-            # User.favorites.set(favorites)
-            # return Response(serializer.data, status=status.HTTP_200_OK)
-
+       
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -177,29 +161,6 @@ def users_favorite(request, favorite_pk):
     }
 
     return Response(response_data)
-    # return Response({'message': f'financial_options_dep 랭킹: {most_common_financial_options_dep}'})
-    # print(users_with_favorite)
-    # favorite = Favorite.user_set.filter(pk=favorite_pk).exists()
-    # print(favorite)
-    # me = get_object_or_404(get_user_model(), pk=request.user.id).id
-    # my = CustomRegisterSerializer(request.user)['favorite']
-    # me = get_object_or_404(get_user_model(), pk=request.user.id)
-    # for user in users_with_favorite:
-   
-   
-    # favorite_counts = Favorite.objects.filter(user_set__in=users_with_favorite).values('id').annotate(count=Count('id'))    
-    # print(favorite_counts)
-    # most_favorite = favorite_counts.order_by('-count').first()
-    # # most_favorite = favorite_counts.order_by('-count')
-    # print('###',most_favorite)
-    # # favorite = random.sample(my_favorites, 1)
-    # # print(favorite,'000')
-    # # users = get_list_or_404(get_user_model()).filter(favorite_id)
-    # # for user in users:
-    # #     if favorite in user.favorite:
-    # #         pass
-
-    # return Response({'message': 'favorite 추천 ok?'})
 
 
 # @api_view(['GET'])
@@ -265,36 +226,66 @@ def my_intr_rate_graph(request):
     return Response(response_data)
 
 
-    ####그래프###
-    # plt.figure(figsize=(12, 6))
+# 내가 가입한 상품이름 찾기
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_products(request):
+    user = get_object_or_404(get_user_model(), pk=request.user.id)
+    print(user)
+    ## 내가 가입한 예금
+    my_options_dep = DepositOptions.objects.filter(dep_users__pk=user.id)
+    my_products_dep = DepositProducts.objects.filter(pk__in=my_options_dep.values('product__pk'))
 
-    # bar_width = 0.35
-    # index = np.arange(len(all_product_names))
+    print(my_products_dep)
 
-    # plt.bar(index, all_intr_rates, bar_width, label='Interest Rate')
-    # plt.bar(index + bar_width, all_intr_rates2, bar_width, label='Interest Rate2')
+    # # ## 내가 가입한 적금
+    my_options_sav = SavingOptions.objects.filter(sav_users__pk=user.id)
+    my_products_sav = SavingProducts.objects.filter(pk__in=my_options_sav.values('product__pk'))
 
-    # plt.xlabel('Product Name')
-    # plt.ylabel('Interest Rate')
-    # plt.title('Interest Rate Comparison for Deposit and Saving Products')
-    # plt.xticks(index + bar_width / 2, all_product_names, rotation=45, ha='right')
-    # plt.legend()
-    # plt.tight_layout()
-    # plt.show()
-    # plt.figure(figsize=(10, 6))
-    # plt.bar(all_dep_name, all_dep_rate, label='Deposit Rate')
-    # plt.bar(all_dep_name, all_dep_rate2, label='Deposit Rate2', alpha=0.7)
-    # plt.bar(all_sav_name, all_sav_rate, label='Saving Rate')
-    # plt.bar(all_sav_name, all_sav_rate2, label='Saving Rate2', alpha=0.7)
-
-    # plt.xlabel('Product Name')
-    # plt.ylabel('Interest Rate')
-    # plt.title('Interest Rate Comparison for Deposit and Saving Products')
-    # plt.legend()
-    # plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for better visibility
-    # plt.tight_layout()
+    # 이름 뽑기
+    my_product_names_dep = my_products_dep.values_list('fin_prdt_nm', flat=True)
+    my_product_names_sav = my_products_sav.values_list('fin_prdt_nm', flat=True)
+    print(my_options_sav)
+    
+    response_data = {
+        'deposit_products': list(my_product_names_dep),
+        'saving_products': list(my_product_names_sav),
+    }
+    return Response(response_data)
 
 
-    # return Response({'message':'그래프용'})
+## 마일리지 저장
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def add_mileage(request):
+    if request.method == 'PUT':
+        user = get_object_or_404(get_user_model(), pk=request.user.id)
+        serializer = UpdateUserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-   
+
+## MBTI 별
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def users_mbti(request, mbti):
+    users = get_user_model().objects.filter(mbti=mbti)
+
+    all_user_financial_options_dep = DepositOptions.objects.filter(dep_users__in=users)
+    financial_options_dep_counts = all_user_financial_options_dep.values('id').annotate(count=Count('id'))
+    sorted_financial_options_dep = financial_options_dep_counts.order_by('-count')
+    most_financial_options_dep = list(sorted_financial_options_dep[:5])
+
+    all_user_financial_options_sav = SavingOptions.objects.filter(sav_users__in=users)
+    financial_options_sav_counts = all_user_financial_options_sav.values('id').annotate(count=Count('id'))
+    sorted_financial_options_sav = financial_options_sav_counts.order_by('-count')
+    most_financial_options_sav = list(sorted_financial_options_sav[:5])
+
+    response_data = {
+        'most_financial_options_dep': most_financial_options_dep,
+        'most_financial_options_sav': most_financial_options_sav,
+    }
+    return Response(response_data)
+
+
