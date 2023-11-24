@@ -289,3 +289,4 @@ def users_mbti(request, mbti):
     return Response(response_data)
 
 
+
