@@ -176,3 +176,17 @@ AUTH_USER_MODEL = 'accounts.User'
 
 MEDIA_ROOT = BASE_DIR/'media'
 MEDIA_URL = 'media/'
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+import os
+import environ
+
+env = environ.Env(DEBUG=(bool, True))
+
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env')
+)
+
+F_API_KEY = env('F_API_KEY')
+E_API_KEY = env('E_API_KEY')

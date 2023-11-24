@@ -21,11 +21,13 @@ from selenium.webdriver.common.by import By
 from io import BytesIO
 import base64
 
+from django.conf import settings
+
+E_API_KEY = settings.E_API_KEY
 
 # Create your views here.
 @api_view(['GET'])
 def save_exchange_rates(request):
-    api_key = 'VZuN8cgkfjO4hxiYFqEyk6B1RKaJdeZz'
     today = datetime.now()
     # 주말이면 이전 금요일
     if today.weekday() in [5, 6]:
@@ -37,8 +39,8 @@ def save_exchange_rates(request):
         search_date = today.strftime('%Y%m%d')
     
     # search_date = datetime.now().strftime('%Y%m%d')
-    url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate={search_date}&data=AP01'
-    # url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={api_key}&searchdate=20230215&data=AP01'
+    url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={E_API_KEY}&searchdate={search_date}&data=AP01'
+    # url = f' https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={E_API_KEY}&searchdate=20230215&data=AP01'
     
 
     ## 테이블 리셋

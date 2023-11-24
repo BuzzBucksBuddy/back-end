@@ -10,13 +10,15 @@ from django.db.models import F
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+from django.conf import settings
+
+F_API_KEY = settings.F_API_KEY
 
 # 상품 정보 전체 저장
 @api_view(['GET'])
 def products_data(request):
-    API_KEY = '2d7916000e6e7a639cab7d9f3fa858be'
-    url_dep = f'http://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth={API_KEY}&topFinGrpNo=020000&pageNo=1'
-    url_sav = f'http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json?auth={API_KEY}&topFinGrpNo=020000&pageNo=1'
+    url_dep = f'http://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth={F_API_KEY}&topFinGrpNo=020000&pageNo=1'
+    url_sav = f'http://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json?auth={F_API_KEY}&topFinGrpNo=020000&pageNo=1'
 
     ## 테이블 리셋
     # curr_data_dep = DepositProducts.objects.all()
