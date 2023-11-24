@@ -275,12 +275,12 @@ def users_mbti(request, mbti):
     all_user_financial_options_dep = DepositOptions.objects.filter(dep_users__in=users)
     financial_options_dep_counts = all_user_financial_options_dep.values('id').annotate(count=Count('id'))
     sorted_financial_options_dep = financial_options_dep_counts.order_by('-count')
-    most_financial_options_dep = list(sorted_financial_options_dep[:5])
+    most_financial_options_dep = list(sorted_financial_options_dep[:3])
 
     all_user_financial_options_sav = SavingOptions.objects.filter(sav_users__in=users)
     financial_options_sav_counts = all_user_financial_options_sav.values('id').annotate(count=Count('id'))
     sorted_financial_options_sav = financial_options_sav_counts.order_by('-count')
-    most_financial_options_sav = list(sorted_financial_options_sav[:5])
+    most_financial_options_sav = list(sorted_financial_options_sav[:3])
 
     response_data = {
         'most_financial_options_dep': most_financial_options_dep,

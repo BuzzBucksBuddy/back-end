@@ -339,7 +339,7 @@ def random_product_sav(request):
     pdt_random_sav = list(pdt_sav)
     shuffle(pdt_random_sav)  # 섞음
     
-    selected_pdt_sav = pdt_random_sav[:5]
+    selected_pdt_sav = pdt_random_sav[:20]
 
     serializer_sav = SavingProductsSerializer(selected_pdt_sav, many=True)
     return Response(serializer_sav.data)
